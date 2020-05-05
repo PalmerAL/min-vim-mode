@@ -2,12 +2,12 @@ var alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
 
 function createLinkItem (link, rect, key) {
   var item = document.createElement('span')
-  item.setAttribute('style', 'position: fixed; padding: 1px 3px 0px 3px; background-color: yellow; color: black; z-index: 9999; font-family: Helvetica, Arial, sans-serif;font-weight: bold;font-size: 12px; background: linear-gradient(to bottom, #FFF785 0%,#FFC542 100%); border: solid 1px #C38A22; border-radius: 3px; box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.3);')
+  item.setAttribute('style', 'position: absolute; padding: 1px 3px 0px 3px; background-color: yellow; color: black; z-index: 9999; font-family: Helvetica, Arial, sans-serif;font-weight: bold;font-size: 12px; background: linear-gradient(to bottom, #FFF785 0%,#FFC542 100%); border: solid 1px #C38A22; border-radius: 3px; box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.3);')
 
   item.textContent = key
 
-  item.style.top = rect.top + 'px'
-  item.style.left = rect.left + 'px'
+  item.style.top = (window.scrollY + rect.top) + 'px'
+  item.style.left = (window.scrollX + rect.left) + 'px'
 
   return item
 }
