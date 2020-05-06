@@ -1,4 +1,6 @@
 var alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
+var command = ''
+let KEY_TIMEOUT = 1000
 
 function createLinkItem (link, rect, key) {
   var item = document.createElement('span')
@@ -95,31 +97,72 @@ function isCurrentlyInInput () {
   return document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA'
 }
 
+// We use keydown here to match Escape.
+// We do not want to prevent default as this will
+// prevent copying stuff and likely much more.
 document.addEventListener('keydown', function (e) {
-  if (e.key === 'f' && !isLinkKeyMode && !isCurrentlyInInput()) {
-    showLinkKeys()
-    openLinkNewTab = false
-  } else if (e.key === 'F' && !isLinkKeyMode && !isCurrentlyInInput()) {
-    showLinkKeys()
-    openLinkNewTab = true
-  } else if (e.key === 'Escape' && isLinkKeyMode) {
+  if (e.key === 'Escape' && isLinkKeyMode) {
     hideLinkKeys()
-  } else if (isLinkKeyMode) {
-    onTextTyped(e.key)
   }
 })
 
-// Use j to scroll down
-window.addEventListener('keypress', function (e) {
-  if (e.keyCode === 106 && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
-    window.scrollBy(0, 60)
+// We use keypress here for ease of matching
+document.addEventListener('keypress', function (e) {
+  if (!isCurrentlyInInput() && !isLinkKeyMode) {
+    command += e.key
+    var match = true
+    switch(command) {
+      case 'f':
+        showLinkKeys()
+        openLinkNewTab = false
+        break;
+      case 'F':
+        showLinkKeys()
+        openLinkNewTab = true
+        break;
+      // Use j to scroll down
+      case 'j':
+        window.scrollBy(0, 60)
+        break;
+      // Use k to scroll up
+      case 'k':
+        window.scrollBy(0, -60)
+        break;
+      case 'dd':
+        window.top.close()
+        break;
+      case 'yy':
+        var dummy = document.createElement('input'),
+        text = window.location.href;
+
+        document.body.appendChild(dummy);
+        dummy.value = text;
+        dummy.select();
+        document.execCommand('copy');
+        document.body.removeChild(dummy);
+        break;
+      case 'gg':
+        window.scrollTo(0,0)
+        break;
+      case 'G':
+        window.scrollTo(0,document.body.scrollHeight);
+        break;
+      default:
+        match = false
+        break;
+    }
+    if (!match && command.length === 1) {
+      // Reset typed command after KEY_TIMEOUT milliseconds
+      // This is the time the user has to type the full command
+      setTimeout(function () {
+        command = ''
+      }, KEY_TIMEOUT);
+    } else if (match) {
+      command = ''
+      // We could also at it to a buffer here for repeating the action via '.' as in Vim
+    }
     e.preventDefault()
-  }
-})
-// Use k to scroll up
-window.addEventListener('keypress', function (e) {
-  if (e.keyCode === 107 && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
-    window.scrollBy(0, -60)
-    e.preventDefault()
+  } else if (isLinkKeyMode) {
+    onTextTyped(e.key)
   }
 })
