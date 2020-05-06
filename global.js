@@ -110,14 +110,16 @@ document.addEventListener('keydown', function (e) {
 })
 
 
+// Use j to scroll down
 window.addEventListener('keypress', function (e) {
-  // Use j to scroll down
-  if (e.keyCode === 106 && !isCurrentlyInInput ()) {
+  if (e.keyCode === 106 && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
     window.scrollBy(0, 60)
     e.preventDefault()
   }
-  // Use k to scroll up
-  if (e.keyCode === 107 && !sCurrentlyInInput ()) {
+})
+// Use k to scroll up
+window.addEventListener('keypress', function (e) {
+  if (e.keyCode === 107 && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
     window.scrollBy(0, -60)
     e.preventDefault()
   }
