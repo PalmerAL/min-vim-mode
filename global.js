@@ -109,7 +109,6 @@ document.addEventListener('keydown', function (e) {
   }
 })
 
-
 // Use j to scroll down
 window.addEventListener('keypress', function (e) {
   if (e.keyCode === 106 && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
