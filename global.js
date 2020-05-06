@@ -92,7 +92,7 @@ function onTextTyped (key) {
 }
 
 function isCurrentlyInInput () {
-  return document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA'
+  return document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA' || document.activeElement.isContentEditable
 }
 
 document.addEventListener('keydown', function (e) {
@@ -109,16 +109,15 @@ document.addEventListener('keydown', function (e) {
   }
 })
 
-// Use j to scroll down
+
 window.addEventListener('keypress', function (e) {
-  if (e.keyCode === 106 && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
+  // Use j to scroll down
+  if (e.keyCode === 106 && !isCurrentlyInInput ()) {
     window.scrollBy(0, 60)
     e.preventDefault()
   }
-})
-// Use k to scroll up
-window.addEventListener('keypress', function (e) {
-  if (e.keyCode === 107 && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
+  // Use k to scroll up
+  if (e.keyCode === 107 && !sCurrentlyInInput ()) {
     window.scrollBy(0, -60)
     e.preventDefault()
   }
