@@ -92,7 +92,7 @@ function onTextTyped (key) {
 }
 
 function isCurrentlyInInput () {
-  return document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA'
+  return document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA' || document.activeElement.isContentEditable
 }
 
 document.addEventListener('keydown', function (e) {
