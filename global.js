@@ -1,4 +1,10 @@
-var alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
+// USER: Put your colliding keys in here, e.g. if you use h and l for tab switching
+// x for tab closing like in vimium, etc...
+// => These letters will consequently NOT be used for link following!
+let problematic_letters = 'hlx'.split('')
+// This a set-theoretic difference, removing the unwanted letters
+var alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('').filter(x => !problematic_letters.includes(x));
+console.log(alphabet)
 var command = ''
 let KEY_TIMEOUT = 1000
 
@@ -25,11 +31,15 @@ function isVisible (rect) {
 
 function getNextKeyCombination (index) {
   // use 1st half of alphabet for single letter, and 2nd half for double letter, so that no collisions can occur
-  if (index < 13) {
+  let halfIndex = Math.floor(alphabet.length / 2)
+  if (index < halfIndex) {
     return alphabet[index]
   } else {
+    // Subtract half-index from index such that lettering starts at first index for second letter, e.g.
+    // na nb nc nd ...
+    index -= halfIndex
     // two-letter combination
-    return alphabet[Math.floor(index / 13) + 12] + alphabet[index % 26]
+    return alphabet[Math.floor(index / alphabet.length) + halfIndex] + alphabet[index % alphabet.length]
   }
 }
 
@@ -96,6 +106,10 @@ function onTextTyped (key) {
 function isCurrentlyInInput () {
   return document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA'
 }
+
+// Future TODO:
+// We should provide means to disable the keybings for a blacklist of websites
+// github.com for example has a lot of vim-like bindings of its own.
 
 // We use keydown here to match Escape.
 // We do not want to prevent default as this will
