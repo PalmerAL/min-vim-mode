@@ -128,9 +128,6 @@ document.addEventListener('keypress', function (e) {
       case 'k':
         window.scrollBy(0, -60)
         break;
-      case 'dd':
-        window.top.close()
-        break;
       case 'yy':
         var dummy = document.createElement('input'),
         text = window.location.href;
