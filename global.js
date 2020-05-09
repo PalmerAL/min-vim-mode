@@ -1,12 +1,11 @@
-// USER: Put your colliding keys in here, e.g. if you use h and l for tab switching
-// x for tab closing like in vimium, etc...
-// => These letters will consequently NOT be used for link following!
-let problematic_letters = 'hlx'.split('')
-// This a set-theoretic difference, removing the unwanted letters
-var alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('').filter(x => !problematic_letters.includes(x));
-console.log(alphabet)
+var alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
 var command = ''
 let KEY_TIMEOUT = 1000
+let blockKeybindings = document.createElement("input")
+blockKeybindings.id = "9372rhj28t29e83jdsfvw39rjm19qu"
+blockKeybindings.style = "position: absolute; left: -999px;" // display: none; doesn't work
+// blockKeybindings.onblur = function() { console.log("Blurred") }
+document.body.appendChild(blockKeybindings)
 
 function createLinkItem (link, rect, key) {
   var item = document.createElement('span')
@@ -48,6 +47,14 @@ var isLinkKeyMode = false
 var openLinkNewTab = false
 var typedText = ''
 
+
+// This ensures blockKeybindings doesn't get blurred because of
+// unintentional clicks of the user
+document.body.onclick = function(){ if (isLinkKeyMode) {
+  blockKeybindings.select()
+}}
+
+
 function showLinkKeys () {
   isLinkKeyMode = true
   typedText = ''
@@ -85,8 +92,10 @@ function hideLinkKeys () {
 function onTextTyped (key) {
   typedText += key
 
+  var viableElementRemaining = false
   currentLinkItems.forEach(function (link) {
     if (link.key === typedText) {
+      viableElementRemaining = true
       if (link.link.tagName === 'A') {
         if (openLinkNewTab) {
           window.open(link.link.href)
@@ -97,41 +106,83 @@ function onTextTyped (key) {
         link.link.click()
       }
       hideLinkKeys()
+      // It is critical that we do NOT blur blockKeybindings here
+      // else the keypress is passed on to the window
+      // This is actually only a problem with opening in a new tab
+      // but we can manage it through visibilitychange below
     } else if (!link.key.startsWith(typedText)) {
       link.element.hidden = true
+    } else {
+      viableElementRemaining = true
     }
   })
+
+  // This is meant to run if the user types a non-valid combination
+  if (!viableElementRemaining) {
+    hideLinkKeys() // we call this to remove all links, also sets linkKeyMode to false
+    blockKeybindings.blur()
+  }
 }
+
+document.addEventListener('visibilitychange', function () {
+  if (document.visibilityState != "hidden" && isLinkKeyMode) {
+    blockKeybindings.select()
+  } else if (document.visibilityState != "hidden" && !isLinkKeyMode) {
+    // This is important after a linkKeyMode with opening in new tab
+    // We need to blur it here after returning to this original tab
+    // so that normal keybindings work again
+    blockKeybindings.blur()
+  }
+}, false);
 
 function isCurrentlyInInput () {
   return document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA'
 }
 
-// Future TODO:
+function copyUrlToClipboard () {
+  var dummy = document.createElement('input'),
+  text = window.location.href;
+
+  document.body.appendChild(dummy);
+  dummy.value = text;
+  dummy.select();
+  document.execCommand('copy');
+  document.body.removeChild(dummy);
+}
+// (maybe) Future TODO:
 // We should provide means to disable the keybings for a blacklist of websites
 // github.com for example has a lot of vim-like bindings of its own.
 
-// We use keydown here to match Escape.
-// We do not want to prevent default as this will
-// prevent copying stuff and likely much more.
+// We put scrolling here in keydown, so that we can continously press it.
 document.addEventListener('keydown', function (e) {
-  if (e.key === 'Escape' && isLinkKeyMode) {
-    hideLinkKeys()
+  if ((e.key === 'j' || e.key === 'k') && !isLinkKeyMode && !isCurrentlyInInput()) {
+    if (e.key === 'j') {
+      window.scrollBy(0, 60)
+    } else if (e.key === 'k') {
+      window.scrollBy(0, -60)
+    }
   }
 })
 
-// We use keypress here for ease of matching
-document.addEventListener('keypress', function (e) {
-  if (!isCurrentlyInInput() && !isLinkKeyMode) {
+const commandChars = new Set(['f','F','y','g','G'])
+const linkChars = new Set(alphabet)
+document.addEventListener('keyup', function (e) {
+  if (e.key === 'Escape' && isLinkKeyMode) {
+    hideLinkKeys()
+    linkKeyMode = false
+    blockKeybindings.blur()
+  } else if (!isCurrentlyInInput() && !isLinkKeyMode && commandChars.has(e.key)) {
     command += e.key
     var match = true
     switch(command) {
       case 'f':
         showLinkKeys()
+        blockKeybindings.select()
         openLinkNewTab = false
         break;
       case 'F':
         showLinkKeys()
+        blockKeybindings.select()
         openLinkNewTab = true
         break;
       // Use j to scroll down
@@ -143,14 +194,7 @@ document.addEventListener('keypress', function (e) {
         window.scrollBy(0, -60)
         break;
       case 'yy':
-        var dummy = document.createElement('input'),
-        text = window.location.href;
-
-        document.body.appendChild(dummy);
-        dummy.value = text;
-        dummy.select();
-        document.execCommand('copy');
-        document.body.removeChild(dummy);
+        copyUrlToClipboard()
         break;
       case 'gg':
         window.scrollTo(0,0)
@@ -162,7 +206,7 @@ document.addEventListener('keypress', function (e) {
         match = false
         break;
     }
-    if (!match && command.length === 1) {
+    if (!match && command.length === 1) { // TODO: Check if timeout has been set
       // Reset typed command after KEY_TIMEOUT milliseconds
       // This is the time the user has to type the full command
       setTimeout(function () {
@@ -170,10 +214,11 @@ document.addEventListener('keypress', function (e) {
       }, KEY_TIMEOUT);
     } else if (match) {
       command = ''
-      // We could also at it to a buffer here for repeating the action via '.' as in Vim
+      // We could also add it to a buffer here for repeating the action via '.' as in Vim
     }
     e.preventDefault()
-  } else if (isLinkKeyMode) {
+  } else if (isLinkKeyMode && linkChars.has(e.key)) {
     onTextTyped(e.key)
+    // e.preventDefault()
   }
 })
