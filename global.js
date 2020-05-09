@@ -1,10 +1,9 @@
 var alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
 var command = ''
 let KEY_TIMEOUT = 1000
-let blockKeybindings = document.createElement("input")
-blockKeybindings.id = "9372rhj28t29e83jdsfvw39rjm19qu"
-blockKeybindings.style = "position: absolute; left: -999px;" // display: none; doesn't work
-// blockKeybindings.onblur = function() { console.log("Blurred") }
+
+let blockKeybindings = document.createElement('input')
+blockKeybindings.style = 'position: fixed; top: 0; left: -999px;' // display: none; doesn't work
 document.body.appendChild(blockKeybindings)
 
 function createLinkItem (link, rect, key) {
@@ -47,13 +46,13 @@ var isLinkKeyMode = false
 var openLinkNewTab = false
 var typedText = ''
 
-
 // This ensures blockKeybindings doesn't get blurred because of
 // unintentional clicks of the user
-document.body.onclick = function(){ if (isLinkKeyMode) {
-  blockKeybindings.select()
-}}
-
+document.body.addEventListener('click', function () {
+  if (isLinkKeyMode) {
+    blockKeybindings.select()
+  }
+})
 
 function showLinkKeys () {
   isLinkKeyMode = true
@@ -125,29 +124,29 @@ function onTextTyped (key) {
 }
 
 document.addEventListener('visibilitychange', function () {
-  if (document.visibilityState != "hidden" && isLinkKeyMode) {
+  if (document.visibilityState !== 'hidden' && isLinkKeyMode) {
     blockKeybindings.select()
-  } else if (document.visibilityState != "hidden" && !isLinkKeyMode) {
+  } else if (document.visibilityState !== 'hidden' && !isLinkKeyMode) {
     // This is important after a linkKeyMode with opening in new tab
     // We need to blur it here after returning to this original tab
     // so that normal keybindings work again
     blockKeybindings.blur()
   }
-}, false);
+}, false)
 
 function isCurrentlyInInput () {
   return document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA'
 }
 
 function copyUrlToClipboard () {
-  var dummy = document.createElement('input'),
-  text = window.location.href;
+  var dummy = document.createElement('input')
+  var text = window.location.href
 
-  document.body.appendChild(dummy);
-  dummy.value = text;
-  dummy.select();
-  document.execCommand('copy');
-  document.body.removeChild(dummy);
+  document.body.appendChild(dummy)
+  dummy.value = text
+  dummy.select()
+  document.execCommand('copy')
+  document.body.removeChild(dummy)
 }
 // (maybe) Future TODO:
 // We should provide means to disable the keybings for a blacklist of websites
@@ -164,54 +163,53 @@ document.addEventListener('keydown', function (e) {
   }
 })
 
-const commandChars = new Set(['f','F','y','g','G'])
+const commandChars = new Set(['f', 'F', 'y', 'g', 'G'])
 const linkChars = new Set(alphabet)
 document.addEventListener('keyup', function (e) {
   if (e.key === 'Escape' && isLinkKeyMode) {
     hideLinkKeys()
-    linkKeyMode = false
     blockKeybindings.blur()
   } else if (!isCurrentlyInInput() && !isLinkKeyMode && commandChars.has(e.key)) {
     command += e.key
     var match = true
-    switch(command) {
+    switch (command) {
       case 'f':
         showLinkKeys()
         blockKeybindings.select()
         openLinkNewTab = false
-        break;
+        break
       case 'F':
         showLinkKeys()
         blockKeybindings.select()
         openLinkNewTab = true
-        break;
+        break
       // Use j to scroll down
       case 'j':
         window.scrollBy(0, 60)
-        break;
+        break
       // Use k to scroll up
       case 'k':
         window.scrollBy(0, -60)
-        break;
+        break
       case 'yy':
         copyUrlToClipboard()
-        break;
+        break
       case 'gg':
-        window.scrollTo(0,0)
-        break;
+        window.scrollTo(0, 0)
+        break
       case 'G':
-        window.scrollTo(0,document.body.scrollHeight);
-        break;
+        window.scrollTo(0, document.body.scrollHeight)
+        break
       default:
         match = false
-        break;
+        break
     }
     if (!match && command.length === 1) { // TODO: Check if timeout has been set
       // Reset typed command after KEY_TIMEOUT milliseconds
       // This is the time the user has to type the full command
       setTimeout(function () {
         command = ''
-      }, KEY_TIMEOUT);
+      }, KEY_TIMEOUT)
     } else if (match) {
       command = ''
       // We could also add it to a buffer here for repeating the action via '.' as in Vim
