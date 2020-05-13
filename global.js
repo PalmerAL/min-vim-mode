@@ -61,7 +61,7 @@ function showLinkKeys () {
   var links = []
   var linkRects = [];
 
-  [].slice.call(document.querySelectorAll('a, button')).forEach(function (link) {
+  [].slice.call(document.querySelectorAll('a, button, input, textarea')).forEach(function (link) {
     var rect = link.getBoundingClientRect()
     if (isVisible(rect)) {
       links.push(link)
@@ -103,6 +103,8 @@ function onTextTyped (key) {
         }
       } else if (link.link.tagName === 'BUTTON') {
         link.link.click()
+      } else if (['INPUT','TEXTAREA'].indexOf(link.link.tagName) >= 0) {
+        link.link.focus();
       }
       hideLinkKeys()
       // It is critical that we do NOT blur blockKeybindings here
@@ -169,6 +171,8 @@ document.addEventListener('keyup', function (e) {
   if (e.key === 'Escape' && isLinkKeyMode) {
     hideLinkKeys()
     blockKeybindings.blur()
+  } else if (e.key === 'Escape' && ['INPUT','TEXTAREA'].indexOf(e.target.tagName) >= 0) {
+    e.target.blur();
   } else if (!isCurrentlyInInput() && !isLinkKeyMode && commandChars.has(e.key)) {
     command += e.key
     var match = true
