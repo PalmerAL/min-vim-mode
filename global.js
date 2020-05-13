@@ -103,7 +103,7 @@ function onTextTyped (key) {
         }
       } else if (link.link.tagName === 'BUTTON') {
         link.link.click()
-      } else if (['INPUT','TEXTAREA'].indexOf(link.link.tagName) >= 0) {
+      } else if (isCurrentlyInInput()) {
         link.link.focus();
       }
       hideLinkKeys()
@@ -171,7 +171,7 @@ document.addEventListener('keyup', function (e) {
   if (e.key === 'Escape' && isLinkKeyMode) {
     hideLinkKeys()
     blockKeybindings.blur()
-  } else if (e.key === 'Escape' && ['INPUT','TEXTAREA'].indexOf(e.target.tagName) >= 0) {
+  } else if (e.key === 'Escape' && isCurrentlyInInput()) {
     e.target.blur();
   } else if (!isCurrentlyInInput() && !isLinkKeyMode && commandChars.has(e.key)) {
     command += e.key
