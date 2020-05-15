@@ -61,7 +61,7 @@ function showLinkKeys () {
   var links = []
   var linkRects = [];
 
-  [].slice.call(document.querySelectorAll('a, button, input, textarea')).forEach(function (link) {
+  [].slice.call(document.querySelectorAll('a, button, input, textarea, select')).forEach(function (link) {
     var rect = link.getBoundingClientRect()
     if (isVisible(rect)) {
       links.push(link)
@@ -103,8 +103,15 @@ function onTextTyped (key) {
         }
       } else if (link.link.tagName === 'BUTTON') {
         link.link.click()
-      } else if (isCurrentlyInInput()) {
+      } else if (isFocusable(link.link)) {
         link.link.focus();
+        if(['checkbox','radio'].indexOf(link.link.attributes.getNamedItem('type').value.toLowerCase()) >= 0) {
+          link.link.click();
+          document.activeElement.blur();
+        }
+        else if(link.link.tagName === 'SELECT') {
+          link.link.click();
+        }
       }
       hideLinkKeys()
       // It is critical that we do NOT blur blockKeybindings here
@@ -138,6 +145,10 @@ document.addEventListener('visibilitychange', function () {
 
 function isCurrentlyInInput () {
   return document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA' || document.activeElement.isContentEditable
+}
+
+function isFocusable(element) {
+  return ['INPUT','TEXTAREA','SELECT'].indexOf(element.tagName) >= 0 || element.isContentEditable;
 }
 
 function copyUrlToClipboard () {
