@@ -105,7 +105,7 @@ function onTextTyped (key) {
         link.link.click()
       } else if (isFocusable(link.link)) {
         link.link.focus();
-        if(['checkbox','radio'].indexOf(link.link.attributes.getNamedItem('type').value.toLowerCase()) >= 0) {
+        if(['checkbox','radio'].indexOf(link.link.getAttribute('type').toLowerCase()) >= 0) {
           link.link.click();
           document.activeElement.blur();
         }
