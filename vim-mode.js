@@ -1,3 +1,9 @@
+// ==UserScript==
+// @name Vim Mode
+// @match *
+// @run-at document-start
+// ==/UserScript==
+
 var alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
 var command = ''
 let KEY_TIMEOUT = 1000
@@ -104,13 +110,12 @@ function onTextTyped (key) {
       } else if (link.link.tagName === 'BUTTON') {
         link.link.click()
       } else if (isFocusable(link.link)) {
-        link.link.focus();
-        if(['checkbox','radio'].indexOf(link.link.getAttribute('type').toLowerCase()) >= 0) {
-          link.link.click();
-          document.activeElement.blur();
-        }
-        else if(link.link.tagName === 'SELECT') {
-          link.link.click();
+        link.link.focus()
+        if (['checkbox', 'radio'].indexOf(link.link.getAttribute('type').toLowerCase()) >= 0) {
+          link.link.click()
+          document.activeElement.blur()
+        } else if (link.link.tagName === 'SELECT') {
+          link.link.click()
         }
       }
       hideLinkKeys()
@@ -147,8 +152,8 @@ function isCurrentlyInInput () {
   return document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA' || document.activeElement.isContentEditable
 }
 
-function isFocusable(element) {
-  return ['INPUT','TEXTAREA','SELECT'].indexOf(element.tagName) >= 0 || element.isContentEditable;
+function isFocusable (element) {
+  return ['INPUT', 'TEXTAREA', 'SELECT'].indexOf(element.tagName) >= 0 || element.isContentEditable
 }
 
 function copyUrlToClipboard () {
@@ -183,7 +188,7 @@ document.addEventListener('keyup', function (e) {
     hideLinkKeys()
     blockKeybindings.blur()
   } else if (e.key === 'Escape' && isCurrentlyInInput()) {
-    e.target.blur();
+    e.target.blur()
   } else if (!isCurrentlyInInput() && !isLinkKeyMode && commandChars.has(e.key)) {
     command += e.key
     var match = true

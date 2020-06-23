@@ -13,5 +13,5 @@ Many of the remaining shortcuts in Min can also be customized to use single char
 
 ## Installation
 
-* Follow [these instructions](https://github.com/minbrowser/min/wiki/userscripts) to create a userscript.
-* Copy the contents of this repository's `global.js` file into your own `global.js`.
+* Enable userscripts in Min and create a `userscripts` folder following [these instructions](https://github.com/minbrowser/min/wiki/userscripts), and save `vim-mode.js` inside it.
+* Restart Min.
