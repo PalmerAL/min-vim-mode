@@ -109,7 +109,7 @@ function onTextTyped (key) {
           dummy.select()
           document.execCommand('copy')
           document.body.removeChild(dummy)
-        } else if (linkAction == "openInNewTab") {
+        } else if (linkAction === "openInNewTab") {
           window.open(link.link.href)
         } else {
           window.open(link.link.href, '_top')
@@ -188,7 +188,7 @@ document.addEventListener('keydown', function (e) {
   }
 })
 
-const commandChars = new Set(['f', 'F', 'c', 'y', 'g', 'G'])
+const commandChars = new Set(['f', 'F', 'y', 'g', 'G', 'c'])
 const linkChars = new Set(alphabet)
 document.addEventListener('keyup', function (e) {
   if (e.key === 'Escape' && isLinkKeyMode) {
@@ -210,7 +210,7 @@ document.addEventListener('keyup', function (e) {
         blockKeybindings.select()
         linkAction = 'openInNewTab'
         break
-     // use c to copy a link to the clipboard, using the GUI for link navigation
+     // use c to copy a link to the clipboard
      case 'c':
         showLinkKeys()
         blockKeybindings.select()
