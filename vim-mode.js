@@ -211,7 +211,7 @@ document.addEventListener('keyup', function (e) {
         linkAction = 'openInNewTab'
         break
      // use c to copy a link to the clipboard
-     case 'c':
+     case 'cc':
         showLinkKeys()
         blockKeybindings.select()
         linkAction = 'copyToClipboard'
