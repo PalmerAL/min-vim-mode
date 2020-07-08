@@ -49,7 +49,7 @@ function getNextKeyCombination (index) {
 
 var currentLinkItems = []
 var isLinkKeyMode = false
-var openLinkNewTab = false
+var linkAction = null
 var typedText = ''
 
 // This ensures blockKeybindings doesn't get blurred because of
@@ -102,7 +102,14 @@ function onTextTyped (key) {
     if (link.key === typedText) {
       viableElementRemaining = true
       if (link.link.tagName === 'A') {
-        if (openLinkNewTab) {
+        if (linkAction === "copyToClipboard") {
+          var dummy = document.createElement('input')
+          dummy.value = link.link.href
+          document.body.appendChild(dummy)
+          dummy.select()
+          document.execCommand('copy')
+          document.body.removeChild(dummy)
+        } else if (linkAction === "openInNewTab") {
           window.open(link.link.href)
         } else {
           window.open(link.link.href, '_top')
@@ -181,7 +188,7 @@ document.addEventListener('keydown', function (e) {
   }
 })
 
-const commandChars = new Set(['f', 'F', 'y', 'g', 'G'])
+const commandChars = new Set(['f', 'F', 'y', 'g', 'G', 'c'])
 const linkChars = new Set(alphabet)
 document.addEventListener('keyup', function (e) {
   if (e.key === 'Escape' && isLinkKeyMode) {
@@ -189,19 +196,25 @@ document.addEventListener('keyup', function (e) {
     blockKeybindings.blur()
   } else if (e.key === 'Escape' && isCurrentlyInInput()) {
     e.target.blur()
-  } else if (!isCurrentlyInInput() && !isLinkKeyMode && commandChars.has(e.key)) {
+  }  else if (!isCurrentlyInInput() && !isLinkKeyMode && commandChars.has(e.key) && !e.ctrlKey && !e.metaKey) {
     command += e.key
     var match = true
     switch (command) {
       case 'f':
         showLinkKeys()
         blockKeybindings.select()
-        openLinkNewTab = false
+        linkAction = 'open'
         break
       case 'F':
         showLinkKeys()
         blockKeybindings.select()
-        openLinkNewTab = true
+        linkAction = 'openInNewTab'
+        break
+     // use c to copy a link to the clipboard
+     case 'c':
+        showLinkKeys()
+        blockKeybindings.select()
+        linkAction = 'copyToClipboard'
         break
       // Use j to scroll down
       case 'j':
