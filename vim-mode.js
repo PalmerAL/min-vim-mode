@@ -196,7 +196,7 @@ document.addEventListener('keyup', function (e) {
     blockKeybindings.blur()
   } else if (e.key === 'Escape' && isCurrentlyInInput()) {
     e.target.blur()
-  } else if (!isCurrentlyInInput() && !isLinkKeyMode && commandChars.has(e.key)) {
+  }  else if (!isCurrentlyInInput() && !isLinkKeyMode && commandChars.has(e.key) && !e.ctrlKey && !e.metaKey) {
     command += e.key
     var match = true
     switch (command) {
@@ -211,7 +211,7 @@ document.addEventListener('keyup', function (e) {
         linkAction = 'openInNewTab'
         break
      // use c to copy a link to the clipboard
-     case 'cc':
+     case 'c':
         showLinkKeys()
         blockKeybindings.select()
         linkAction = 'copyToClipboard'
