@@ -9,7 +9,7 @@ var command = ''
 let KEY_TIMEOUT = 1000
 
 let blockKeybindings = document.createElement('input')
-blockKeybindings.style = 'position: fixed; top: 0; left: -999px;' // display: none; doesn't work
+blockKeybindings.style = 'position: fixed; top: 0; left: -9999px;' // display: none; doesn't work
 document.body.appendChild(blockKeybindings)
 
 function createLinkItem (link, rect, key) {
