@@ -191,6 +191,12 @@ document.addEventListener('keydown', function (e) {
 const commandChars = new Set(['f', 'F', 'y', 'g', 'G', 'c'])
 const linkChars = new Set(alphabet)
 document.addEventListener('keyup', function (e) {
+  // Using karabiner meta key to exit link key mode
+  if (e.key === "Meta" && isLinkKeyMode) {
+    hideLinkKeys();
+    blockKeybindings.blur();
+  }
+
   if (e.key === 'Escape' && isLinkKeyMode) {
     hideLinkKeys()
     blockKeybindings.blur()
