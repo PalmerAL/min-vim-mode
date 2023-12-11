@@ -179,7 +179,7 @@ function copyUrlToClipboard () {
 
 // When using the "j" or "k" Vim commands. (j = down, k = up)
 const scrollAmount = 60
-// When usin the "d" or "u" Vim commands. (d = down, u = up)
+// When using the "d" or "u" Vim commands. (d = down, u = up)
 const quickScrollAmount = 400
 
 // We put scrolling here in keydown, so that we can continously press it.
