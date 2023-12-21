@@ -5,7 +5,9 @@ Adds Vim-style shortcuts to [Min](https://github.com/minbrowser/min):
 * Press f to search for links (or F to open the link in a new tab)
 * Press c to copy a link to the clipboard
 * Press j to scroll down
+* Press d to scroll down faster
 * Press k to scroll up
+* Press u to scroll up faster
 * Press gg to scroll to the top
 * Press G to scroll to the bottom
 * Press yy to copy the current url
