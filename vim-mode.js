@@ -198,6 +198,7 @@ document.addEventListener('keydown', function (e) {
 })
 
 const commandChars = new Set(['f', 'F', 'y', 'g', 'G', 'c'])
+const linkChars = new Set(alphabet)
 document.addEventListener('keyup', function (e) {
   if (e.key === 'Escape' && isLinkKeyMode) {
     hideLinkKeys()
