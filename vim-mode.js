@@ -177,13 +177,22 @@ function copyUrlToClipboard () {
 // We should provide means to disable the keybings for a blacklist of websites
 // github.com for example has a lot of vim-like bindings of its own.
 
+// When using the "j" or "k" Vim commands. (j = down, k = up)
+const scrollAmount = 60
+// When using the "d" or "u" Vim commands. (d = down, u = up)
+const quickScrollAmount = 400
+
 // We put scrolling here in keydown, so that we can continously press it.
 document.addEventListener('keydown', function (e) {
-  if ((e.key === 'j' || e.key === 'k') && !isLinkKeyMode && !isCurrentlyInInput()) {
+  if ((e.key === 'j' || e.key === 'k' || e.key === 'd' || e.key === 'u') && !isLinkKeyMode && !isCurrentlyInInput()) {
     if (e.key === 'j') {
-      window.scrollBy(0, 60)
+      window.scrollBy(0, scrollAmount)
     } else if (e.key === 'k') {
-      window.scrollBy(0, -60)
+      window.scrollBy(0, -scrollAmount)
+    } else if (e.key === 'd') {
+      window.scrollBy(0, quickScrollAmount)
+    } else if (e.key === 'u') {
+      window.scrollBy(0, -quickScrollAmount)
     }
   }
 })
@@ -215,14 +224,6 @@ document.addEventListener('keyup', function (e) {
         showLinkKeys()
         blockKeybindings.select()
         linkAction = 'copyToClipboard'
-        break
-      // Use j to scroll down
-      case 'j':
-        window.scrollBy(0, 60)
-        break
-      // Use k to scroll up
-      case 'k':
-        window.scrollBy(0, -60)
         break
       case 'yy':
         copyUrlToClipboard()
